@@ -12,6 +12,11 @@ Vue.component('app-header', {
           <li class="nav-item active">
             <router-link class="nav-link" to="/">Home <span class="sr-only">(current)</span></router-link>
           </li>
+          
+          <li class="nav-item">
+            <router-link class="nav-link" to="/upload">Upload Photo <span class="sr-only">(current)</span></router-link>
+          </li>
+          
         </ul>
       </div>
     </nav>
@@ -39,6 +44,79 @@ const Home = Vue.component('home', {
        return {}
     }
 });
+
+//Exercise 3
+
+const uploadphoto = Vue.component('upload-form', {
+  template: `
+  <div>
+  <h3>VueJS- Upload New File</h3>
+    
+    <div v-for="error in errors">
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+    </div>
+    
+    <div v-if="this.status_message == 'File Success'" class="alert alert-success" role="alert">
+        File successfully uploaded
+    </div>
+    
+    <form id="upload_form" enctype=multipart/form-data @submit.prevent="uploadPhoto"  method="POST">
+        <div class="form">
+            <label for="description">Description</label>
+            <textarea class="form-control" name="description" id="description" placeholder="Enter description here"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="photo">Photo</label>
+            <input name="photo" id="photo" type="file">
+        </div>
+        <button type=submit class="btn btn-primary" > Upload </button>
+    </form>
+  </div>
+  
+  `,
+    methods:{
+        uploadPhoto: function() {
+            let self = this; 
+            let uploadForm = document.getElementById('upload_form');
+            let form_data = new FormData(uploadForm);
+          
+            fetch("/api/upload",{
+                method: 'POST',
+                body: form_data,
+                headers: { 'X-CSRFToken': token }, 
+                credentials: 'same-origin'
+                
+            })
+                .then(function (response) {
+                    return response.json();
+                
+                })
+                
+                .then(function (jsonResponse) {
+                    console.log(jsonResponse);
+                    self.errors = jsonResponse.errors;
+                    self.status_message= jsonResponse.message;
+                    
+                })
+                
+                .catch(function (error) { 
+                    console.log(error);
+              
+                });
+            
+        }
+        
+        
+         
+    },
+    data:function(){
+        return{errors:[],status_message:'' };
+    }
+    
+});
+
 
 // Define Routes
 const router = new VueRouter({
