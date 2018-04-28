@@ -58,7 +58,7 @@ const uploadphoto = Vue.component('upload-form', {
         </div>
     </div>
     
-    <div v-if="this.status_message == 'File Success'" class="alert alert-success" role="alert">
+    <div v-if="this.status_message == 'File Upload Successful'" class="alert alert-success" role="alert">
         File successfully uploaded
     </div>
     
